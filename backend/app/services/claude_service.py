@@ -1,5 +1,5 @@
 import httpx
-from ..config import get_settings
+from app.config import get_settings
 
 settings = get_settings()
 
@@ -30,15 +30,18 @@ class ClaudeService:
                     },
                 )
                 data = response.json()
-                return data.get("content", [{}])[0].get("text")
+                content = data.get("content", [])
+                if content and isinstance(content, list) and isinstance(content[0], dict):
+                    return content[0].get("text")
+                return None
         except Exception:
             return None
 
     async def generate_path_narrative(self, user_skills: list,
                                       target_path: dict,
-                                      skill_gap: list) -> str:
-        skill_names = [s.skill.name if hasattr(s, 'skill') and s.skill else s.name
-                       for s in user_skills]
+                                      skill_gap: list[str]) -> str:
+        skill_names: list[str] = [s.skill.name if hasattr(s, 'skill') and s.skill else s.name
+                                  for s in user_skills]
         prompt = f"""You are Synthos, a career intelligence system with deep knowledge of labor markets and skill development.
 
 User's current skills: {skill_names}

@@ -3,9 +3,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 import time
 
-from .config import get_settings
-from .database import check_db_health
-from .routes import auth, skills, market, paths, intelligence
+from app.config import get_settings
+from app.database import check_db_health
+from app.routes import auth, skills, market, paths, intelligence
 
 settings = get_settings()
 
@@ -32,7 +32,7 @@ app.add_middleware(
 async def add_timing_header(request: Request, call_next):
     start = time.time()
     response = await call_next(request)
-    elapsed = round((time.time() - start) * 1000, 2)
+    elapsed = float(f"{(time.time() - start) * 1000:.2f}")
     response.headers["X-Response-Time"] = f"{elapsed}ms"
     return response
 

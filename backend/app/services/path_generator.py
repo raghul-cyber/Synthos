@@ -16,7 +16,7 @@ class PathGeneratorService:
         result = await session.execute(select(CareerPath))
         all_paths = result.scalars().all()
 
-        analyses = []
+        analyses: list[dict] = []
         for path in all_paths:
             required = path.required_skills or []
             nice = path.nice_to_have_skills or []
@@ -72,7 +72,7 @@ class PathGeneratorService:
         skills_per_block = max(1, len(skill_gap) // (weeks // 2))
 
         for i in range(0, len(skill_gap), skills_per_block):
-            block = skill_gap[i:i + skills_per_block]
+            block: list[str] = skill_gap[i:i + skills_per_block]
             week_start = (i // skills_per_block) * 2 + 1
             week_end = week_start + 1
             plan.append({

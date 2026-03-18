@@ -1,7 +1,7 @@
 import networkx as nx
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from ..models.skill import Skill, SkillAdjacency, UserSkill
+from app.models.skill import Skill, SkillAdjacency, UserSkill
 
 
 class SkillGraphService:
@@ -70,11 +70,11 @@ class SkillGraphService:
             if sid in owned_set or sid in seen:
                 continue
             seen.add(sid)
-            composite_score = float(adj.adjacency_score) * 0.6 + (skill.market_demand_score / 100) * 0.4
+            composite_score: float = float(adj.adjacency_score) * 0.6 + (skill.market_demand_score / 100) * 0.4
             recommendations.append({
                 **skill.to_dict(),
                 "adjacency_score": float(adj.adjacency_score),
-                "composite_score": round(composite_score, 3),
+                "composite_score": float(f"{composite_score:.3f}"),
                 "demand_indicator": "🔥 Hot" if skill.market_demand_score >= 85
                     else ("→ Stable" if skill.demand_trend != "declining" else "↓ Declining"),
             })

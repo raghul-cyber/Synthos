@@ -1,7 +1,7 @@
-from .user import User
-from .skill import Skill, SkillAdjacency, UserSkill
-from .career_path import CareerPath, UserPathAnalysis
-from .market_signal import MarketSignal
+from app.models.user import User
+from app.models.skill import Skill, SkillAdjacency, UserSkill
+from app.models.career_path import CareerPath, UserPathAnalysis
+from app.models.market_signal import MarketSignal
 
 __all__ = [
     "User", "Skill", "SkillAdjacency", "UserSkill",

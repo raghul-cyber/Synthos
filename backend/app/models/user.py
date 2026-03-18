@@ -3,7 +3,7 @@ from datetime import datetime
 from sqlalchemy import Column, String, Integer, DateTime
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
-from ..database import Base
+from app.database import Base
 
 
 class User(Base):
@@ -36,18 +36,18 @@ class User(Base):
     def calculate_synthos_score(self) -> int:
         if not self.user_skills:
             return 0
-        demand_scores = []
-        advanced_count = 0
+        demand_scores: list[int] = []
+        advanced_skills: list[int] = []
         categories = set()
         for us in self.user_skills:
             if us.skill:
                 demand_scores.append(us.skill.market_demand_score or 50)
                 categories.add(us.skill.category)
                 if us.proficiency == "advanced":
-                    advanced_count += 1
+                    advanced_skills.append(1)
         if not demand_scores:
             return 0
         base = sum(demand_scores) / len(demand_scores)
-        depth_bonus = advanced_count * 5
-        diversity_bonus = len(categories) * 3
-        return min(100, int(base * 0.7 + depth_bonus + diversity_bonus))
+        depth_bonus: int = len(advanced_skills) * 5
+        diversity_bonus: int = len(categories) * 3
+        return int(min(100.0, float(base * 0.7 + depth_bonus + diversity_bonus)))
