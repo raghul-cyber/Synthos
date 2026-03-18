@@ -1,0 +1,67 @@
+name: synthos
+region: nyc3
+envs:
+  - key: ENVIRONMENT
+    value: production
+  - key: REDIS_URL
+    scope: RUN_TIME
+    value: ${synthos-redis.REDIS_URL}
+
+services:
+  - name: synthos-api
+    github:
+      repo: raghul-cyber/Synthos
+      branch: main
+      deploy_on_push: true
+    source_dir: backend
+    environment_slug: python
+    instance_count: 1
+    instance_size_slug: basic-xxs
+    run_command: gunicorn app.main:app --workers 2 --worker-class uvicorn.workers.UvicornWorker --bind 0.0.0.0:${PORT}
+    envs:
+      - key: DATABASE_URL
+        scope: RUN_TIME
+        value: ${synthos-db.DATABASE_URL}
+      - key: ANTHROPIC_API_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: SECRET_KEY
+        scope: RUN_AND_BUILD_TIME
+        type: SECRET
+      - key: CORS_ORIGINS
+        scope: RUN_TIME
+        value: ${APP_URL}
+    http_port: 8080
+    routes:
+      - path: /api
+
+static_sites:
+  - name: synthos-web
+    github:
+      repo: raghul-cyber/Synthos
+      branch: main
+      deploy_on_push: true
+    source_dir: frontend
+    environment_slug: node-js
+    build_command: npm install --legacy-peer-deps && npm run build
+    output_dir: dist
+    envs:
+      - key: VITE_API_URL
+        scope: RUN_AND_BUILD_TIME
+        value: ${APP_URL}
+    routes:
+      - path: /
+
+databases:
+  - name: synthos-db
+    engine: PG
+    version: "15"
+    db_name: synthosdb
+    db_user: synthosuser
+    production: true
+    cluster_name: synthos-postgres-cluster
+
+  - name: synthos-redis
+    engine: REDIS
+    version: "7"
+    production: false
