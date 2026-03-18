@@ -3,6 +3,7 @@
     "backend"
   ],
   "search_path": [
-    "backend/venv/Lib/site-packages"
+    "backend/venv/Lib/site-packages",
+    "backend"
   ]
 }

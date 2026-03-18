@@ -3,6 +3,7 @@
     "."
   ],
   "search_path": [
-    "venv/Lib/site-packages"
+    "venv/Lib/site-packages",
+    "."
   ]
 }
